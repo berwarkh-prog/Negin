@@ -24,21 +24,18 @@ body {
     animation: fadeIn 2s forwards;
 }
 
-h1 {
-    font-weight:300;
-    letter-spacing:2px;
-}
+h1 { font-weight:300; letter-spacing:2px; }
 
 button {
     padding:12px 35px;
-    font-size:18px;
+    font-size:20px;
     border-radius:40px;
     border:1px solid #ff4da6;
     background:transparent;
     color:#ff4da6;
     cursor:pointer;
-    margin:10px;
-    transition:0.4s;
+    margin:15px;
+    transition:0.3s;
 }
 
 button:hover {
@@ -66,20 +63,20 @@ button:hover {
 
 .heart-glow {
     font-size:80px;
-    animation: pulse 2s infinite;
+    animation:pulse 2s infinite;
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); text-shadow:0 0 10px #ff4da6;}
-    50% { transform: scale(1.2); text-shadow:0 0 30px #ff4da6;}
-    100% { transform: scale(1); text-shadow:0 0 10px #ff4da6;}
+    0% { transform:scale(1); text-shadow:0 0 10px #ff4da6;}
+    50% { transform:scale(1.2); text-shadow:0 0 30px #ff4da6;}
+    100% { transform:scale(1); text-shadow:0 0 10px #ff4da6;}
 }
 </style>
 </head>
 <body>
 
 <audio id="music" loop>
-    <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_8c0bde0c1e.mp3" type="audio/mpeg">
+    <source src="music.mp3" type="audio/mpeg">
 </audio>
 
 <div class="screen" id="intro">
@@ -89,28 +86,59 @@ button:hover {
 
 <script>
 
+let noClicks = 0;
+let musicStarted = false;
+
 const intro = document.getElementById("intro");
 const music = document.getElementById("music");
 
 intro.addEventListener("click", () => {
-    music.play();
+    if (!musicStarted) {
+        music.play().catch(()=>{});
+        musicStarted = true;
+    }
     showMain();
 });
 
 function showMain() {
     document.body.innerHTML = `
+    <audio id="music" loop autoplay>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
     <div class="screen">
-        <h1 style="font-size:38px;">In a world full of moments...</h1>
+        <h1 style="font-size:36px;">In a world full of moments...</h1>
         <p style="opacity:0.7;">you are my favorite one.</p>
         <h1 style="margin-top:30px;">Will You Be My Valentine?</h1>
         <button onclick="yes()">Yes</button>
-        <button onclick="this.style.display='none'">No</button>
+        <button id="noBtn" onclick="handleNo()">No</button>
     </div>
     `;
 }
 
+function handleNo() {
+    noClicks++;
+    const noBtn = document.getElementById("noBtn");
+
+    if (noClicks === 1) {
+        noBtn.style.fontSize = "16px";
+        noBtn.style.padding = "8px 20px";
+    }
+    else if (noClicks === 2) {
+        noBtn.style.fontSize = "13px";
+        noBtn.style.padding = "6px 15px";
+    }
+    else if (noClicks === 3) {
+        noBtn.style.fontSize = "10px";
+        noBtn.style.padding = "4px 10px";
+    }
+    else if (noClicks >= 4) {
+        noBtn.style.display = "none";
+    }
+}
+
 function yes() {
     document.body.innerHTML = `
+    <audio src="music.mp3" autoplay loop></audio>
     <div class="screen">
         <div class="heart-glow">❤️</div>
         <h1 style="font-size:42px;">Negin</h1>
@@ -131,7 +159,7 @@ function yes() {
 function createParticle() {
     const p = document.createElement("div");
     p.classList.add("particle");
-    const size = Math.random()*6+2;
+    const size=Math.random()*6+2;
     p.style.width=size+"px";
     p.style.height=size+"px";
     p.style.left=Math.random()*100+"vw";
